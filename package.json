@@ -10,10 +10,14 @@
   },
   "files": [
     "dist/",
-    "!**/*.map"
+    "!**/*.map",
+    "!**/*.spec.*"
   ],
   "type": "module",
   "main": "./dist/index.js",
+  "scripts": {
+    "test": "node --no-warnings --loader tsm ./src/index.spec.ts"
+  },
   "devDependencies": {
     "@tsconfig/node16": "^1.0.2",
     "@types/node": "^17.0.8",
