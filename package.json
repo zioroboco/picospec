@@ -7,5 +7,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/zioroboco/picospec.git"
-  }
+  },
+  "packageManager": "yarn@3.1.1"
 }
