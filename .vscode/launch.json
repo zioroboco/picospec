@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "tsm: file",
+      "program": "${file}",
+      "request": "launch",
+      "runtimeArgs": ["--loader", "tsm"],
+      "skipFiles": ["<node_internals>/**", "**/tsm/**"],
+      "type": "pwa-node"
+    }
+  ]
+}
