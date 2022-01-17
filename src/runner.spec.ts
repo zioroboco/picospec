@@ -1,6 +1,6 @@
+import { Report, runner } from "./runner"
 import { strict as assert } from "assert"
 import { describe, expect, it } from "@jest/globals"
-import { runner } from "./runner"
 
 describe(`running no tests`, () => {
   const run = runner(({ describe, it }) => {})
@@ -48,7 +48,7 @@ describe(`running two synchronous, passing tests`, () => {
 
 describe(`running a synchronous, failing test`, () => {
   const run = runner(pico => {
-    pico.it(`fails`, () =>  assert.fail())
+    pico.it(`fails`, () => assert.fail())
   })
 
   it(`reports zero passes and one failures`, async () => {
@@ -65,8 +65,8 @@ describe(`running two passing and two failing tests`, () => {
   const run = runner(pico => {
     pico.it(`passes one`, () => {})
     pico.it(`passes two`, () => {})
-    pico.it(`fails two`, () =>  assert.fail())
-    pico.it(`fails two`, () =>  assert.fail())
+    pico.it(`fails two`, () => assert.fail())
+    pico.it(`fails two`, () => assert.fail())
   })
 
   it(`reports two passes and two failures`, async () => {
@@ -113,8 +113,8 @@ describe(`running a mixture of passing and failing sync/async tests`, () => {
   const run = runner(pico => {
     pico.it(`passes sync`, () => {})
     pico.it(`passes async`, async () => {})
-    pico.it(`fails sync`, () =>  assert.fail())
-    pico.it(`fails async`, async () =>  assert.fail())
+    pico.it(`fails sync`, () => assert.fail())
+    pico.it(`fails async`, async () => assert.fail())
   })
 
   it(`reports two passes and two failures`, async () => {
@@ -127,23 +127,38 @@ describe(`running a mixture of passing and failing sync/async tests`, () => {
   })
 })
 
-describe(`with descriptions`, () => {
+describe(`with nested descriptions`, () => {
   const run = runner(pico => {
     pico.it(`one`, () => {})
+    pico.it(`one-errors`, () => assert.fail())
     pico.describe(`outer`, () => {
       pico.it(`two`, () => {})
+      pico.it(`two-errors`, () => assert.fail())
       pico.describe(`inner`, () => {
-        pico.it(`three`, () =>  {})
+        pico.it(`three`, () => {})
+        pico.it(`three-errors`, () => assert.fail())
       })
     })
+    pico.it(`four`, () => {})
+    pico.it(`four-errors`, () => assert.fail())
   })
 
-  it.only(`reports three passes`, async () => {
+  it(`reports everything`, async () => {
     const report = await run()
 
     expect(report).toMatchObject({
-      passes: 3,
-      failures: 0,
-    })
+      passes: 4,
+      failures: 4,
+      tests: [
+        { title: `one`, descriptions: [] },
+        { title: `one-errors`, descriptions: [], error: {} },
+        { title: `two`, descriptions: ["outer"] },
+        { title: `two-errors`, descriptions: ["outer"], error: {} },
+        { title: `three`, descriptions: ["outer", "inner"] },
+        { title: `three-errors`, descriptions: ["outer", "inner"], error: {} },
+        { title: `four`, descriptions: [] },
+        { title: `four-errors`, descriptions: [], error: {} },
+      ],
+    } as Report)
   })
 })
