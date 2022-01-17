@@ -9,9 +9,9 @@ type Report = {
   failures: number
 }
 
-export const runner: Runner = function(inner) {
+export const runner: Runner = function (inner) {
   const report: Report = { passes: 0, failures: 0 }
-  return async function() {
+  return async function () {
     return report
   }
 }
