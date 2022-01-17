@@ -126,3 +126,24 @@ describe(`running a mixture of passing and failing sync/async tests`, () => {
     })
   })
 })
+
+describe(`with descriptions`, () => {
+  const run = runner(pico => {
+    pico.it(`one`, () => {})
+    pico.describe(`outer`, () => {
+      pico.it(`two`, () => {})
+      pico.describe(`inner`, () => {
+        pico.it(`three`, () =>  {})
+      })
+    })
+  })
+
+  it.only(`reports three passes`, async () => {
+    const report = await run()
+
+    expect(report).toMatchObject({
+      passes: 3,
+      failures: 0,
+    })
+  })
+})
