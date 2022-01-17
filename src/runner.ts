@@ -1,8 +1,8 @@
-type Descriptor = (name: string, thunk: () => void) => void
-type Test = (name: string, thunk: () => void | Promise<void>) => void
+type Suite = (title: string, thunk: () => void) => void
+type Test = (title: string, thunk: () => void | Promise<void>) => void
 
 type Runner = (inner: RunnerInner) => () => Promise<Report>
-type RunnerInner = (api: { describe: Descriptor; it: Test }) => void
+type RunnerInner = (api: { describe: Suite; it: Test }) => void
 
 type Report = {
   passes: number
