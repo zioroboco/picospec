@@ -1,5 +1,0 @@
----
-"picospec": minor
----
-
-Initial release
