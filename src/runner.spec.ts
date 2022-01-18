@@ -1,4 +1,4 @@
-import { Report, runner } from "./runner"
+import { Results, runner } from "./runner"
 import { strict as assert } from "assert"
 import { describe, expect, it } from "@jest/globals"
 
@@ -6,9 +6,9 @@ describe(`running no tests`, () => {
   const run = runner(({ describe, it }) => {})
 
   it(`returns zero passes and failures`, async () => {
-    const report = await run()
+    const results = await run()
 
-    expect(report).toMatchObject({
+    expect(results).toMatchObject({
       passes: 0,
       failures: 0,
     })
@@ -21,9 +21,9 @@ describe(`running a synchronous, passing test`, () => {
   })
 
   it(`reports one pass and zero failures`, async () => {
-    const report = await run()
+    const results = await run()
 
-    expect(report).toMatchObject({
+    expect(results).toMatchObject({
       passes: 1,
       failures: 0,
     })
@@ -37,9 +37,9 @@ describe(`running two synchronous, passing tests`, () => {
   })
 
   it(`reports two passes and zero failures`, async () => {
-    const report = await run()
+    const results = await run()
 
-    expect(report).toMatchObject({
+    expect(results).toMatchObject({
       passes: 2,
       failures: 0,
     })
@@ -52,9 +52,9 @@ describe(`running a synchronous, failing test`, () => {
   })
 
   it(`reports zero passes and one failures`, async () => {
-    const report = await run()
+    const results = await run()
 
-    expect(report).toMatchObject({
+    expect(results).toMatchObject({
       passes: 0,
       failures: 1,
     })
@@ -70,9 +70,9 @@ describe(`running two passing and two failing tests`, () => {
   })
 
   it(`reports two passes and two failures`, async () => {
-    const report = await run()
+    const results = await run()
 
-    expect(report).toMatchObject({
+    expect(results).toMatchObject({
       passes: 2,
       failures: 2,
     })
@@ -85,9 +85,9 @@ describe(`running an asynchronous, passing test`, () => {
   })
 
   it(`reports one pass and zero failures`, async () => {
-    const report = await run()
+    const results = await run()
 
-    expect(report).toMatchObject({
+    expect(results).toMatchObject({
       passes: 1,
       failures: 0,
     })
@@ -100,9 +100,9 @@ describe(`running an asynchronous, failing test`, () => {
   })
 
   it(`reports zero passes and one failures`, async () => {
-    const report = await run()
+    const results = await run()
 
-    expect(report).toMatchObject({
+    expect(results).toMatchObject({
       passes: 0,
       failures: 1,
     })
@@ -118,9 +118,9 @@ describe(`running a mixture of passing and failing sync/async tests`, () => {
   })
 
   it(`reports two passes and two failures`, async () => {
-    const report = await run()
+    const results = await run()
 
-    expect(report).toMatchObject({
+    expect(results).toMatchObject({
       passes: 2,
       failures: 2,
     })
@@ -143,10 +143,10 @@ describe(`with nested descriptions`, () => {
     pico.it(`four-errors`, () => assert.fail())
   })
 
-  it(`reports everything`, async () => {
-    const report = await run()
+  it(`returns expected results`, async () => {
+    const results = await run()
 
-    expect(report).toMatchObject({
+    expect(results).toMatchObject({
       passes: 4,
       failures: 4,
       tests: [
@@ -159,6 +159,6 @@ describe(`with nested descriptions`, () => {
         { title: `four`, descriptions: [] },
         { title: `four-errors`, descriptions: [], error: {} },
       ],
-    } as Report)
+    } as Results)
   })
 })
