@@ -19,8 +19,8 @@ export type Results = {
 export const runner: Runner = function (inner, reporter = defaultReporter) {
   reporter.start()
 
-  const results: Results = { passes: 0, failures: 0, tests: [] }
-  const descriptions: string[] = []
+  let results: Results
+  let descriptions: string[]
 
   const describe: Suite = async (title, thunk) => {
     descriptions.push(title)
@@ -50,8 +50,12 @@ export const runner: Runner = function (inner, reporter = defaultReporter) {
   }
 
   return async function () {
+    results = { passes: 0, failures: 0, tests: [] }
+    descriptions = []
+
     await inner({ describe, it })
+
     reporter.done(results)
-    return results
+    return { ...results }
   }
 }

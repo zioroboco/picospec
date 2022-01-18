@@ -172,3 +172,17 @@ describe(`with nested descriptions`, () => {
     } as Results)
   })
 })
+
+describe(`running twice`, () => {
+  it(`doesn't create duplicate results`, async () => {
+    const run = runner(pico => {
+      pico.it(`passes`, () => {})
+    })
+
+    let results: Results
+    results = await run()
+    results = await run()
+
+    expect(results.passes).toBe(1)
+  })
+})
