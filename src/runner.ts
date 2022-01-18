@@ -1,5 +1,4 @@
 import { Reporter, defaultReporter } from "./reporter"
-import { inspect } from "util"
 
 type Suite = (title: string, thunk: () => void) => void
 type Test = (title: string, thunk: () => void | Promise<void>) => void
@@ -39,7 +38,7 @@ export const runner: Runner = function (inner, reporter = defaultReporter) {
       await thunk()
       results.passes++
     } catch (e: unknown) {
-      error = e instanceof Error ? e : new Error(inspect(e))
+      error = e instanceof Error ? e : new Error(String(e))
       results.tests[results.tests.length - 1].error = error
       results.failures++
     }
