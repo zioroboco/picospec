@@ -6,7 +6,7 @@ export const config = {
   modulePathIgnorePatterns: ["\\.js$"],
   preset: "ts-jest/presets/default-esm",
   testEnvironment: "node",
-  testPathIgnorePatterns: ["/node_modules/", "/dist/"],
+  testPathIgnorePatterns: ["/node_modules/", "/dist/", "/examples/"],
 
   globals: {
     "ts-jest": {
