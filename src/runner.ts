@@ -31,6 +31,7 @@ export const runner: Runner = function (inner, reporter = defaultReporter) {
   const it: Test = async (title, thunk) => {
     let error: Error | undefined
     const chain = [...descriptions, title]
+
     results.tests.push({ title, descriptions: [...descriptions] })
 
     try {
