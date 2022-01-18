@@ -56,6 +56,6 @@ export const runner: Runner = function (inner, reporter = defaultReporter) {
     await inner({ describe, it })
 
     reporter.done(results)
-    return { ...results }
+    return results
   }
 }
