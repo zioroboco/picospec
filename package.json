@@ -1,6 +1,6 @@
 {
   "name": "picospec",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A test framework for ants",
   "author": "Louis Quinnell <_@ziorobo.co>",
   "license": "MIT",
