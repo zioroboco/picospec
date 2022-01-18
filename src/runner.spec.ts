@@ -1,6 +1,16 @@
-import { Results, runner } from "./runner"
+import { Reporter } from "./reporter"
+import { Results, Runner, runner as baseRunner } from "./runner"
 import { strict as assert } from "assert"
 import { describe, expect, it } from "@jest/globals"
+
+const reporter: Reporter = {
+  start: () => {},
+  done: () => {},
+  fail: () => {},
+  pass: () => {},
+}
+
+const runner: Runner = inner => baseRunner(inner, reporter)
 
 describe(`running no tests`, () => {
   const run = runner(({ describe, it }) => {})
