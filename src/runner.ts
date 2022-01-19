@@ -30,9 +30,10 @@ export const runner: Runner = function (suite, reporter = consoleReporter) {
   }
 
   const it: Test = async (title, thunk) => {
-    let error: Error | undefined
     const chain = [...descriptions, title]
+    let error: Error | undefined
 
+    const sequence = results.tests.length
     results.tests.push({ title, descriptions: [...descriptions] })
 
     try {
@@ -40,7 +41,7 @@ export const runner: Runner = function (suite, reporter = consoleReporter) {
       results.passes++
     } catch (e: unknown) {
       error = e instanceof Error ? e : new Error(String(e))
-      results.tests[results.tests.length - 1].error = error
+      results.tests[sequence].error = error
       results.failures++
     }
 

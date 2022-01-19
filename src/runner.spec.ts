@@ -186,3 +186,42 @@ describe(`running twice`, () => {
     expect(results.passes).toBe(1)
   })
 })
+
+it(`records all errors from async tests`, async () => {
+  const run = runner(({ describe, it }) => {
+    describe(`sync`, () => {
+      it(`passes`, () => {})
+      it(`fails`, () => {
+        expect(true).toBe(false)
+      })
+    })
+
+    describe(`async`, () => {
+      it(`passes`, async () => {})
+      it(`fails`, async () => {
+        expect(true).toBe(false)
+      })
+    })
+
+    describe(`deeply`, () => {
+      describe(`nested`, () => {
+        it(`passes`, async () => {})
+        it(`fails`, async () => {
+          expect(true).toBe(false)
+        })
+      })
+    })
+  })
+
+  const results = await run()
+
+  expect(results.tests).toMatchObject([
+    {},
+    { error: {} },
+    {},
+    { error: {} },
+    {},
+    { error: {} },
+  ])
+})
+
