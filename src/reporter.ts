@@ -27,13 +27,14 @@ export const consoleReporter: Reporter = {
   },
 
   done: ({ results }) => {
+    console.info("") // blank line
     if (results.failures) {
       console.error(
         red(`${results.passes} passing, ${results.failures} failing`)
       )
     } else {
       console.info(
-        green(`\n${results.passes} passing`)
+        green(`${results.passes} passing`)
       )
     }
   },
