@@ -1,14 +1,14 @@
 import type { Results } from "./runner"
 
 export type Reporter = {
-  start: () => void
+  init: () => void
   done: (results: Results) => void,
   fail: (chain: string[], error: Error) => void,
   pass: (chain: string[]) => void,
 }
 
 export const consoleReporter: Reporter = {
-  start: () => {
+  init: () => {
     console.info("") // blank line
   },
   done: results => {

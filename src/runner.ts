@@ -19,7 +19,7 @@ export type Results = {
 }
 
 export const runner: Runner = function (inner, reporter = consoleReporter) {
-  reporter.start()
+  reporter.init()
 
   let results: Results
   let descriptions: string[]
