@@ -1,5 +1,5 @@
 import { Reporter } from "./reporter"
-import { Results, Runner, runner as baseRunner } from "./runner"
+import { Results, Suite, runner as baseRunner } from "./runner"
 import { strict as assert } from "assert"
 import { describe, expect, it } from "@jest/globals"
 
@@ -10,7 +10,7 @@ const reporter: Reporter = {
   pass: () => {},
 }
 
-const runner: Runner = inner => baseRunner(inner, reporter)
+const runner = (suite: Suite) => baseRunner(suite, reporter)
 
 describe(`running no tests`, () => {
   const run = runner(({ describe, it }) => {})

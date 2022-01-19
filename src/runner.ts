@@ -3,10 +3,7 @@ import { Reporter, consoleReporter } from "./reporter"
 type Describe = (title: string, thunk: () => void) => void
 type Test = (title: string, thunk: () => void | Promise<void>) => void
 
-export type Runner = (
-  inner: (api: { describe: Describe; it: Test }) => void,
-  reporter?: Reporter
-) => () => Promise<Results>
+export type Suite = (api: { describe: Describe; it: Test }) => void
 
 export type Results = {
   passes: number
@@ -18,7 +15,9 @@ export type Results = {
   }>
 }
 
-export const runner: Runner = function (inner, reporter = consoleReporter) {
+type Runner = (suite: Suite, reporter?: Reporter) => () => Promise<Results>
+
+export const runner: Runner = function (suite, reporter = consoleReporter) {
   reporter.init()
 
   let results: Results
@@ -56,7 +55,7 @@ export const runner: Runner = function (inner, reporter = consoleReporter) {
     results = { passes: 0, failures: 0, tests: [] }
     descriptions = []
 
-    await inner({ describe, it })
+    await suite({ describe, it })
 
     reporter.done(results)
     return results
