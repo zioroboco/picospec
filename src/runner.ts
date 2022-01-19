@@ -1,10 +1,10 @@
 import { Reporter, consoleReporter } from "./reporter"
 
-type Suite = (title: string, thunk: () => void) => void
+type Describe = (title: string, thunk: () => void) => void
 type Test = (title: string, thunk: () => void | Promise<void>) => void
 
 export type Runner = (
-  inner: (api: { describe: Suite; it: Test }) => void,
+  inner: (api: { describe: Describe; it: Test }) => void,
   reporter?: Reporter
 ) => () => Promise<Results>
 
@@ -24,7 +24,7 @@ export const runner: Runner = function (inner, reporter = consoleReporter) {
   let results: Results
   let descriptions: string[]
 
-  const describe: Suite = async (title, thunk) => {
+  const describe: Describe = async (title, thunk) => {
     descriptions.push(title)
     thunk()
     descriptions.pop()
