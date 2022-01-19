@@ -3,8 +3,10 @@ import { Reporter, consoleReporter } from "./reporter"
 type Suite = (title: string, thunk: () => void) => void
 type Test = (title: string, thunk: () => void | Promise<void>) => void
 
-export type Runner = (inner: RunnerInner, reporter?: Reporter) => () => Promise<Results>
-type RunnerInner = (api: { describe: Suite; it: Test }) => void
+export type Runner = (
+  inner: (api: { describe: Suite; it: Test }) => void,
+  reporter?: Reporter
+) => () => Promise<Results>
 
 export type Results = {
   passes: number
