@@ -20,8 +20,8 @@
     "semi": false
   },
   "scripts": {
-    "failing": "tsc --build && node --no-warnings --experimental-specifier-resolution=node ./example/failing.spec.js",
-    "passing": "tsc --build && node --no-warnings --experimental-specifier-resolution=node ./example/passing.spec.js",
+    "failing": "tsc --build && node --no-warnings --experimental-specifier-resolution=node ./example/failing.spec.mjs",
+    "passing": "tsc --build && node --no-warnings --experimental-specifier-resolution=node ./example/passing.spec.mjs",
     "build": "tsc --build",
     "clean": "tsc --build --clean",
     "test": "jest --no-cache",
