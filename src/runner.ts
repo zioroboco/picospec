@@ -23,7 +23,7 @@ export const runner: Runner = function (suite, reporter = consoleReporter) {
   let results: Results
   let stack: string[]
 
-  const describe: Describe = async (title, thunk) => {
+  const describe: Describe = (title, thunk) => {
     stack.push(title)
     thunk()
     stack.pop()
