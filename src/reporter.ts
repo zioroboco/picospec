@@ -7,7 +7,7 @@ export type Reporter = {
   pass: (chain: string[]) => void,
 }
 
-export const defaultReporter: Reporter = {
+export const consoleReporter: Reporter = {
   start: () => {
     console.info("") // blank line
   },

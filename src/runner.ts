@@ -1,4 +1,4 @@
-import { Reporter, defaultReporter } from "./reporter"
+import { Reporter, consoleReporter } from "./reporter"
 
 type Suite = (title: string, thunk: () => void) => void
 type Test = (title: string, thunk: () => void | Promise<void>) => void
@@ -16,7 +16,7 @@ export type Results = {
   }>
 }
 
-export const runner: Runner = function (inner, reporter = defaultReporter) {
+export const runner: Runner = function (inner, reporter = consoleReporter) {
   reporter.start()
 
   let results: Results
