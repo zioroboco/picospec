@@ -2,16 +2,31 @@ import type { Results } from "./runner"
 
 export type Reporter = {
   init: () => void
-  done: (results: Results) => void,
-  fail: (chain: string[], error: Error) => void,
-  pass: (chain: string[]) => void,
+  pass: (args: { title: string, descriptions: string[] }) => void,
+  fail: (args: { title: string, descriptions: string[], error: Error }) => void,
+  done: (args: { results: Results }) => void,
 }
 
 export const consoleReporter: Reporter = {
   init: () => {
     console.info("") // blank line
   },
-  done: results => {
+
+  pass: ({ title, descriptions }) => {
+    console.info(
+      green(`✔ ${[...descriptions, title].join(" > ")}`)
+    )
+  },
+
+  fail: ({ title, descriptions, error }) => {
+    console.error(
+      [red(`✖ ${[...descriptions, title].join(" > ")}`), error.stack]
+        .filter(Boolean)
+        .join("\n\n") + "\n"
+    )
+  },
+
+  done: ({ results }) => {
     if (results.failures) {
       console.error(
         red(`${results.passes} passing, ${results.failures} failing`)
@@ -21,18 +36,6 @@ export const consoleReporter: Reporter = {
         green(`\n${results.passes} passing`)
       )
     }
-  },
-  fail: (chain, error) => {
-    console.error(
-      [red(`✖ ${chain.join(" > ")}`), error.stack]
-        .filter(Boolean)
-        .join("\n\n") + "\n"
-    )
-  },
-  pass: chain => {
-    console.info(
-      green(`✔ ${chain.join(" > ")}`)
-    )
   },
 }
 

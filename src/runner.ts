@@ -21,20 +21,20 @@ export const runner: Runner = function (suite, reporter = consoleReporter) {
   reporter.init()
 
   let results: Results
-  let descriptions: string[]
+  let stack: string[]
 
   const describe: Describe = async (title, thunk) => {
-    descriptions.push(title)
+    stack.push(title)
     thunk()
-    descriptions.pop()
+    stack.pop()
   }
 
   const it: Test = async (title, thunk) => {
-    const chain = [...descriptions, title]
+    const descriptions = [...stack]
     let error: Error | undefined
 
     const sequence = results.tests.length
-    results.tests.push({ title, descriptions: [...descriptions] })
+    results.tests.push({ title, descriptions })
 
     try {
       await thunk()
@@ -46,19 +46,19 @@ export const runner: Runner = function (suite, reporter = consoleReporter) {
     }
 
     if (error) {
-      reporter.fail(chain, error)
+      reporter.fail({ title, descriptions, error })
     } else {
-      reporter.pass(chain)
+      reporter.pass({ title, descriptions })
     }
   }
 
   return async function () {
     results = { passes: 0, failures: 0, tests: [] }
-    descriptions = []
+    stack = []
 
     await suite({ describe, it })
 
-    reporter.done(results)
+    reporter.done({ results })
     return results
   }
 }
