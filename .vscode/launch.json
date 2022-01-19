@@ -4,7 +4,7 @@
     {
       "name": "jest: file",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": ["--runInBand", "${fileBasenameNoExtension}"],
+      "args": ["--no-cache", "--runInBand", "${fileBasenameNoExtension}"],
       "runtimeArgs": ["--no-warnings", "--experimental-vm-modules"],
       "skipFiles": ["*jest*", "<node_internals>/**"],
       "request": "launch",
@@ -14,7 +14,12 @@
       "name": "tsm: file",
       "program": "${file}",
       "request": "launch",
-      "runtimeArgs": ["--loader", "tsm"],
+      "runtimeArgs": [
+        "--no-warnings",
+        "--experimental-specifier-resolution=node",
+        "--loader",
+        "tsm"
+      ],
       "skipFiles": ["<node_internals>/**", "**/tsm/**"],
       "type": "pwa-node"
     }
