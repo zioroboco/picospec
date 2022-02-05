@@ -1,7 +1,7 @@
 import { Reporter } from "./reporter"
 import { Results, Suite, runner as baseRunner } from "./runner"
 import { strict as assert } from "assert"
-import { describe, expect, it } from "@jest/globals"
+import { describe, expect, it, jest } from "@jest/globals"
 
 const reporter: Reporter = {
   init: () => {},
@@ -225,3 +225,25 @@ it(`records all errors from async tests`, async () => {
   ])
 })
 
+it.skip(`returns expected results with async setup in the describe block`, async () => {
+  const run = runner(({ describe, it }) => {
+    describe(`elsewhere`, async () => {
+      it(`passes`, async () => {
+        await setTimeout(() => {}, 0)
+      })
+    })
+    describe(`with setup`, async () => {
+      await setTimeout(() => {}, 0)
+      it(`also passes`, async () => {
+        await setTimeout(() => {}, 0)
+      })
+    })
+  })
+
+  const results = await run()
+
+  expect(results.tests).toMatchObject([
+    { descriptions: ["elsewhere"], title: "passes" },
+    { descriptions: ["with setup"], title: "also passes" },
+  ])
+})
