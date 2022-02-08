@@ -17,18 +17,35 @@ Picospec is a vanishingly tiny test framework (including test definitions, runne
 It is being used to define and run task pre- and post-execution tests in the [zioroboco/begat](https://github.com/zioroboco/begat) project generator / maintenance toolkit. Maybe it will be useful again some day...
 
 ```ts
-import * as assert from "assert"
-import { runner } from "picospec"
+import { execute, Suite } from "picospec"
+import expect from "expect"
 
-const run = runner(({ describe, it }) => {
-  describe(`arithmetic`, () => {
-    it(`sums two numbers`, async () => {
-      assert.equal(await Promise.resolve(1 + 1), 2)
+const suite: Suite = [
+  describe(`a describe block`)
+    .setup(async () => ({
+      data: await Promise.resolve("blep"),
+    }))
+    .teardown(({ data }) => {
+      cleanupModuleMocksOrWhatever()
     })
-  })
-})
+    .then(({ data }) => [
+      it(`hopefully passes`, () => {
+        expect(data).toMatch("blep")
+      }),
+      it(`sometimes fails`, () => {
+        expect(data).toMatch("blork")
+      }),
+      describe(`nested describe blocks`)
+        .setup(async () => ({
+          nested: await Promise.resolve("neato"),
+        }))
+        .then(({ nested }) => [
+          it(`can access data from the outer block`, () => {
+            expect(nested).not.toMatch(data)
+          }),
+        ]),
+    ]),
+]
 
-run().then(report => {
-  ...
-})
+const results = await execute(suite)
 ```
