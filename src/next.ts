@@ -16,7 +16,7 @@ export type Suite = Promise<BlockResult>
 export type Thunk = () => void | Promise<void>
 
 export async function it (description: string, thunk: Thunk): Test {
-  return new Promise(async (res, _) => {
+  return new Promise(async res => {
     const result = { description } as TestResult
     const start = Date.now()
     try {
@@ -28,4 +28,20 @@ export async function it (description: string, thunk: Thunk): Test {
     result.duration = Date.now() - start
     res(result)
   })
+}
+
+export function describe (description: string) {
+  return {
+    assert: (tests: Array<Test>) => {
+      return new Promise(async res => {
+        const start = Date.now()
+        const results = await Promise.all(tests)
+        res({
+          description,
+          duration: Date.now() - start,
+          outcome: results,
+        })
+      })
+    },
+  }
 }

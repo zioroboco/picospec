@@ -22,3 +22,33 @@ describe(`an individual failing test`, () => {
     })
   })
 })
+
+describe(`a describe block of only tests`, () => {
+  const block = pico.describe(`some tests`).assert([
+    pico.it(`passes, yay`, () => {}),
+    pico.it(`fails, boo`, () => {
+      expect(true).toBe(false)
+    }),
+  ])
+
+  it(`resolves accordingly`, async () => {
+    await block.then(results => {
+      expect(results).toMatchObject({
+        "description": "some tests",
+        "duration": expect.any(Number),
+        "outcome": [
+          {
+            "description": "passes, yay",
+            "duration": expect.any(Number),
+            "outcome": pico.Pass,
+          },
+          {
+            "description": "fails, boo",
+            "duration": expect.any(Number),
+            "outcome": expect.any(Error),
+          },
+        ],
+      })
+    })
+  })
+})

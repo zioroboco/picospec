@@ -25,10 +25,7 @@ const suite: Suite = [
     .setup(async () => ({
       data: await Promise.resolve("blep"),
     }))
-    .teardown(({ data }) => {
-      cleanupModuleMocksOrWhatever()
-    })
-    .then(({ data }) => [
+    .assert(({ data }) => [
       it(`hopefully passes`, () => {
         expect(data).toMatch("blep")
       }),
@@ -39,12 +36,15 @@ const suite: Suite = [
         .setup(async () => ({
           nested: await Promise.resolve("neato"),
         }))
-        .then(({ nested }) => [
+        .assert(({ nested }) => [
           it(`can access data from the outer block`, () => {
             expect(nested).not.toMatch(data)
           }),
         ]),
     ]),
+    .teardown(({ data }) => {
+      cleanupModuleMocksOrWhatever()
+    })
 ]
 
 const results = await execute(suite)
