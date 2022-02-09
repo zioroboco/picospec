@@ -92,7 +92,7 @@ function count (results: Array<TestResult | BlockResult>): number {
   return n
 }
 
-export async function execute (suite: Suite): Promise<Report> {
+export async function suite (suite: Suite): Promise<Report> {
   const start = Date.now()
 
   const results = await Promise.all(

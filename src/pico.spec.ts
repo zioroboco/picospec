@@ -179,7 +179,7 @@ describe(`reporting on a suite of tests`, () => {
   ]
 
   it(`returns the expected report`, async () => {
-    const report = await pico.execute(suite)
+    const report = await pico.suite(suite)
     expect(report).toMatchObject({
       duration: expect.any(Number),
       passed: 3,
