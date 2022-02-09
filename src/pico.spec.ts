@@ -6,7 +6,7 @@ describe(`an individual passing test`, () => {
 
   it(`resolves to a pass`, async () => {
     await test.then(({ outcome }) => {
-      expect(outcome).toBe(pico.Pass)
+      expect(outcome).not.toBeInstanceOf(Error)
     })
   })
 })
@@ -40,7 +40,7 @@ describe(`a describe block of only tests`, () => {
           {
             description: "passes, yay",
             duration: expect.any(Number),
-            outcome: pico.Pass,
+            outcome: expect.any(Symbol),
           },
           {
             description: "fails, boo",
@@ -78,17 +78,17 @@ describe(`a deeply nested describe block`, () => {
       expect(results).toMatchObject({
         description: "some tests",
         outcome: [
-          { description: "passes, yay", outcome: pico.Pass },
+          { description: "passes, yay", outcome: expect.any(Symbol) },
           { description: "fails, boo", outcome: expect.any(Error) },
           {
             description: "with nested tests",
             outcome: [
-              { description: "passes, yay", outcome: pico.Pass },
+              { description: "passes, yay", outcome: expect.any(Symbol) },
               { description: "fails, boo", outcome: expect.any(Error) },
               {
                 description: "with even more nested tests",
                 outcome: [
-                  { description: "passes, yay", outcome: pico.Pass },
+                  { description: "passes, yay", outcome: expect.any(Symbol) },
                   { description: "fails, boo", outcome: expect.any(Error) },
                 ],
               },
@@ -122,7 +122,7 @@ describe(`a describe block with setup function`, () => {
         outcome: [
           {
             description: "passes, yay",
-            outcome: pico.Pass,
+            outcome: expect.any(Symbol),
           },
           {
             description: "fails, boo",
@@ -148,7 +148,7 @@ describe(`a describe block with no setup function`, () => {
         outcome: [
           {
             description: "passes an empty object",
-            outcome: pico.Pass,
+            outcome: expect.any(Symbol),
           },
         ],
       })
@@ -187,17 +187,17 @@ describe(`reporting on a suite of tests`, () => {
       results: [{
         description: "some tests",
         outcome: [
-          { description: "passes, yay", outcome: pico.Pass },
+          { description: "passes, yay", outcome: expect.any(Symbol) },
           { description: "fails, boo", outcome: expect.any(Error) },
           {
             description: "with nested tests",
             outcome: [
-              { description: "passes, yay", outcome: pico.Pass },
+              { description: "passes, yay", outcome: expect.any(Symbol) },
               { description: "fails, boo", outcome: expect.any(Error) },
               {
                 description: "with even more nested tests",
                 outcome: [
-                  { description: "passes, yay", outcome: pico.Pass },
+                  { description: "passes, yay", outcome: expect.any(Symbol) },
                   { description: "fails, boo", outcome: expect.any(Error) },
                 ],
               },

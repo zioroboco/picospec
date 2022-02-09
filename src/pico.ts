@@ -1,4 +1,4 @@
-export const Pass = Symbol("Pass")
+const Pass = Symbol("Pass")
 
 type Result<T> = {
   description: string
@@ -6,14 +6,14 @@ type Result<T> = {
   outcome: T
 }
 
-export type TestResult = Result<typeof Pass | Error >
-export type BlockResult = Result<Array<BlockResult | TestResult>>
+type TestResult = Result<typeof Pass | Error >
+type BlockResult = Result<Array<BlockResult | TestResult>>
 
 export type Test = Promise<TestResult>
 export type Block = Promise<BlockResult>
 export type Suite = Array<Test | Block>
 
-export type Thunk = () => void | Promise<void>
+type Thunk = () => void | Promise<void>
 
 export async function it (description: string, thunk: Thunk): Test {
   return new Promise(async res => {
