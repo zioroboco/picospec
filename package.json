@@ -14,7 +14,7 @@
     "!**/*.spec.*"
   ],
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/pico.js",
   "prettier": {
     "arrowParens": "avoid",
     "semi": false

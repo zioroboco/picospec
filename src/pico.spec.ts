@@ -1,4 +1,4 @@
-import * as pico from "./next"
+import * as pico from "./pico"
 import { describe, expect, it } from "@jest/globals"
 
 describe(`an individual passing test`, () => {
