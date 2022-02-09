@@ -63,28 +63,25 @@ type Report = {
   results: Result[]
 }
 
-function count (where: (r: Result) => boolean, results: Result[]): number {
-  let n = 0
-  for (const result of results) {
-    if (Array.isArray(result.outcome)) {
-      n += count(where, result.outcome)
-    } else {
-      if (where(result)) {
-        n += 1
+function count (where: (r: Result) => boolean) {
+  return function (results: Result[]): number {
+    let n = 0
+    for (const result of results) {
+      if (Array.isArray(result.outcome)) {
+        n += count(where)(result.outcome)
+      } else {
+        if (where(result)) {
+          n += 1
+        }
       }
     }
+    return n
   }
-  return n
 }
 
-const countPassing = (results: Result[]) =>
-  count(r => r.outcome == Pass, results)
-
-const countFailing = (results: Result[]) =>
-  count(r => r.outcome != Pass, results)
-
-const countTotal = (results: Result[]) =>
-  count(r => !Array.isArray(r.outcome), results)
+const countPassing = count(r => r.outcome == Pass)
+const countFailing = count(r => r.outcome != Pass)
+const countTotal = count(r => !Array.isArray(r.outcome))
 
 function consoleLogger (result: Result, level = 0): void {
   const passing = countPassing([result])
