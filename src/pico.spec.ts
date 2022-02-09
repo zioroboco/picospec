@@ -184,8 +184,8 @@ describe(`reporting on a suite of tests`, () => {
     const report = await pico.suite(suite)
     expect(report).toMatchObject({
       duration: expect.any(Number),
-      passed: 3,
-      failed: 3,
+      passes: 3,
+      failures: 3,
       results: [{
         description: "some tests",
         outcome: [

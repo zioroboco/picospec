@@ -59,18 +59,18 @@ export function describe (description: string) {
 
 type Report = {
   duration: number
-  passed: number
-  failed: number
+  passes: number
+  failures: number
   results: Array<TestResult | BlockResult>
 }
 
-function sum (outcome: "passed" | "failed", results: Array<TestResult | BlockResult>): number {
+function sum (outcome: "passes" | "failures", results: Array<TestResult | BlockResult>): number {
   let n = 0
   for (const result of results) {
     if (Array.isArray(result.outcome)) {
       n += sum(outcome, result.outcome)
     } else {
-      if (outcome === "passed") {
+      if (outcome === "passes") {
         n += result.outcome === Pass ? 1 : 0
       } else {
         n += result.outcome !== Pass ? 1 : 0
@@ -100,18 +100,18 @@ export async function suite (suite: Array<Block | Test>): Promise<Report> {
       test =>
         new Promise<TestResult | BlockResult>(async res => {
           const result = await test
-          const passed = sum("passed", [result])
+          const passes = sum("passes", [result])
           const total = count([result])
-          if (result.outcome === Pass || passed === total) {
+          if (result.outcome === Pass || passes === total) {
             console.info([
               green(`✔ ${result.description}`),
-              Array.isArray(result.outcome) ? green(`(${passed})`) : null,
+              Array.isArray(result.outcome) ? green(`(${passes})`) : null,
               grey(`${result.duration}ms`),
             ].filter(Boolean).join(" "))
           } else {
             console.info([
               red(`✖ ${result.description}`),
-              Array.isArray(result.outcome) ? red(`(${passed}/${total})`) : null,
+              Array.isArray(result.outcome) ? red(`(${passes}/${total})`) : null,
               grey(`${result.duration}ms`),
             ].filter(Boolean).join(" "))
           }
@@ -122,15 +122,15 @@ export async function suite (suite: Array<Block | Test>): Promise<Report> {
 
   const report: Report = {
     duration: Date.now() - start,
-    passed: sum("passed", results),
-    failed: sum("failed", results),
+    passes: sum("passes", results),
+    failures: sum("failures", results),
     results,
   }
 
-  if (!report.passed && !report.failed) {
+  if (!report.passes && !report.failures) {
     console.info(yellow(`⚠ No tests found`))
-  } else if (report.failed) {
-    console.info(red(`${report.failed} tests failed`))
+  } else if (report.failures) {
+    console.info(red(`${report.failures} tests failed`))
   } else {
     console.info(green(`All tests passed`))
   }
