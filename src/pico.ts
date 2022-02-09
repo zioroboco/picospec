@@ -9,9 +9,8 @@ type Result<T> = {
 type TestResult = Result<typeof Pass | Error >
 type BlockResult = Result<Array<BlockResult | TestResult>>
 
-export type Test = Promise<TestResult>
-export type Block = Promise<BlockResult>
-export type Suite = Array<Test | Block>
+type Test = Promise<TestResult>
+type Block = Promise<BlockResult>
 
 type Thunk = () => void | Promise<void>
 
@@ -93,7 +92,7 @@ function count (results: Array<TestResult | BlockResult>): number {
   return n
 }
 
-export async function suite (suite: Suite): Promise<Report> {
+export async function suite (suite: Array<Block | Test>): Promise<Report> {
   const start = Date.now()
 
   const results = await Promise.all(
