@@ -24,7 +24,7 @@ export async function it (description: string, thunk: Thunk): Test {
       result.outcome = Pass
     } catch (e: unknown) {
       result.outcome = e instanceof Error ? e : new Error(String(e))
-      console.error(result.outcome)
+      console.info(result.outcome)
     }
     result.duration = Date.now() - start
     res(result)
@@ -110,7 +110,7 @@ export async function suite (suite: Suite): Promise<Report> {
               grey(`${result.duration}ms`),
             ].filter(Boolean).join(" "))
           } else {
-            console.error([
+            console.info([
               red(`✖ ${result.description}`),
               Array.isArray(result.outcome) ? red(`(${passed}/${total})`) : null,
               grey(`${result.duration}ms`),
@@ -129,9 +129,9 @@ export async function suite (suite: Suite): Promise<Report> {
   }
 
   if (!report.passed && !report.failed) {
-    console.warn(yellow(`⚠ No tests found`))
+    console.info(yellow(`⚠ No tests found`))
   } else if (report.failed) {
-    console.error(red(`${report.failed} tests failed`))
+    console.info(red(`${report.failed} tests failed`))
   } else {
     console.info(green(`All tests passed`))
   }

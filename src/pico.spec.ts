@@ -1,5 +1,7 @@
 import * as pico from "./pico"
-import { describe, expect, it } from "@jest/globals"
+import { describe, expect, it, jest } from "@jest/globals"
+
+jest.spyOn(console, "info")
 
 describe(`an individual passing test`, () => {
   const test = pico.it(`passes, yay`, () => {})
