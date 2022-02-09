@@ -89,12 +89,29 @@ const countTotal = (results: Result[]) =>
 function consoleLogger (result: Result, level = 0): void {
   const passing = countPassing([result])
   const total = countTotal([result])
+
+  type ResultType = "pass" | "fail" | "block"
+  const resultType: ResultType = Array.isArray(result.outcome)
+    ? "block"
+    : result.outcome === Pass
+      ? "pass"
+      : "fail"
+
+  let symbol: string
+  switch (resultType) {
+    case "pass": symbol = "✓ "; break
+    case "fail": symbol = "✗ "; break
+    case "block": symbol = "⌄ "; break
+  }
+
   const format = (desc: string) =>
     [
       "  ".repeat(level),
-      result.outcome === Pass || passing === total
-        ? green("✔ " + desc)
-        : red("✖ " + desc),
+      resultType === "block"
+        ? symbol + desc
+        : resultType === "pass"
+          ? green(symbol + desc)
+          : red(symbol + desc),
       " ",
       Array.isArray(result.outcome)
         ? passing === total
