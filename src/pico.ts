@@ -63,49 +63,43 @@ type Report = {
   results: Result[]
 }
 
-function sum (outcome: "passes" | "failures", results: Result[]): number {
+function count (where: (r: Result) => boolean, results: Result[]): number {
   let n = 0
   for (const result of results) {
     if (Array.isArray(result.outcome)) {
-      n += sum(outcome, result.outcome)
+      n += count(where, result.outcome)
     } else {
-      if (outcome === "passes") {
-        n += result.outcome === Pass ? 1 : 0
-      } else {
-        n += result.outcome !== Pass ? 1 : 0
+      if (where(result)) {
+        n += 1
       }
     }
   }
   return n
 }
 
-function count (results: Result[]): number {
-  let n = 0
-  for (const result of results) {
-    if (Array.isArray(result.outcome)) {
-      n += count(result.outcome)
-    } else {
-      n += 1
-    }
-  }
-  return n
-}
+const countPassing = (results: Result[]) =>
+  count(r => r.outcome === Pass, results)
+
+const countFailing = (results: Result[]) =>
+  count(r => r.outcome !== Pass, results)
+
+const countTotal = (results: Result[]) =>
+  count(r => !Array.isArray(r.outcome), results)
 
 function consoleLogger (result: Result, level = 0): void {
-  const passes = sum("passes", [result])
-  const total = count([result])
-
+  const passing = countPassing([result])
+  const total = countTotal([result])
   const format = (desc: string) =>
     [
       "  ".repeat(level),
-      result.outcome === Pass || passes === total
+      result.outcome === Pass || passing === total
         ? green("✔ " + desc)
         : red("✖ " + desc),
       " ",
       Array.isArray(result.outcome)
-        ? passes === total
-          ? green(`(${passes})`)
-          : red(`(${passes}/${total})`)
+        ? passing === total
+          ? green(`(${passing})`)
+          : red(`(${passing}/${total})`)
         : grey(`${result.duration}ms`),
     ].join("")
 
@@ -152,8 +146,8 @@ export async function suite (suite: Array<Block | Test>, settings?: Settings): P
 
   const report: Report = {
     duration: Date.now() - start,
-    passes: sum("passes", results),
-    failures: sum("failures", results),
+    passes: countPassing(results),
+    failures: countFailing(results),
     results,
   }
 
