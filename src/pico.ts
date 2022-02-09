@@ -1,22 +1,22 @@
 const Pass = Symbol("Pass")
 
-type Result<T> = {
+type TestOutcome = typeof Pass | Error
+type BlockOutcome = Array<Result<BlockOutcome> | Result<TestOutcome>>
+
+type Result<T = TestOutcome | BlockOutcome> = {
   description: string
   duration: number
   outcome: T
 }
 
-type TestResult = Result<typeof Pass | Error >
-type BlockResult = Result<Array<BlockResult | TestResult>>
-
-type Test = Promise<TestResult>
-type Block = Promise<BlockResult>
+type Test = Promise<Result<TestOutcome>>
+type Block = Promise<Result<BlockOutcome>>
 
 type Thunk = () => void | Promise<void>
 
 export async function it (description: string, thunk: Thunk): Test {
   return new Promise(async res => {
-    const result = { description } as TestResult
+    const result = { description } as Result<TestOutcome>
     const start = Date.now()
     try {
       await thunk()
@@ -60,10 +60,10 @@ type Report = {
   duration: number
   passes: number
   failures: number
-  results: Array<TestResult | BlockResult>
+  results: Result[]
 }
 
-function sum (outcome: "passes" | "failures", results: Array<TestResult | BlockResult>): number {
+function sum (outcome: "passes" | "failures", results: Result[]): number {
   let n = 0
   for (const result of results) {
     if (Array.isArray(result.outcome)) {
@@ -79,7 +79,7 @@ function sum (outcome: "passes" | "failures", results: Array<TestResult | BlockR
   return n
 }
 
-function count (results: Array<TestResult | BlockResult>): number {
+function count (results: Result[]): number {
   let n = 0
   for (const result of results) {
     if (Array.isArray(result.outcome)) {
@@ -91,7 +91,7 @@ function count (results: Array<TestResult | BlockResult>): number {
   return n
 }
 
-function consoleLogger (result: TestResult | BlockResult, level = 0): void {
+function consoleLogger (result: Result, level = 0): void {
   const passes = sum("passes", [result])
   const total = count([result])
 
@@ -123,7 +123,7 @@ function consoleLogger (result: TestResult | BlockResult, level = 0): void {
   }
 }
 
-type Logger = (result: TestResult | BlockResult) => void
+type Logger = (result: Result) => void
 
 type Settings = {
   log?: boolean
@@ -142,7 +142,7 @@ export async function suite (suite: Array<Block | Test>, settings?: Settings): P
   const results = await Promise.all(
     suite.map(
       test =>
-        new Promise<TestResult | BlockResult>(async res => {
+        new Promise<Result>(async res => {
           const result = await test
           if (log) logger(result)
           res(result)
