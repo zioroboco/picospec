@@ -78,10 +78,10 @@ function count (where: (r: Result) => boolean, results: Result[]): number {
 }
 
 const countPassing = (results: Result[]) =>
-  count(r => r.outcome === Pass, results)
+  count(r => r.outcome == Pass, results)
 
 const countFailing = (results: Result[]) =>
-  count(r => r.outcome !== Pass, results)
+  count(r => r.outcome != Pass, results)
 
 const countTotal = (results: Result[]) =>
   count(r => !Array.isArray(r.outcome), results)
@@ -91,34 +91,38 @@ function consoleLogger (result: Result, level = 0): void {
   const total = countTotal([result])
 
   type ResultType = "pass" | "fail" | "block"
-  const resultType: ResultType = Array.isArray(result.outcome)
+  const type: ResultType = Array.isArray(result.outcome)
     ? "block"
-    : result.outcome === Pass
+    : result.outcome == Pass
       ? "pass"
       : "fail"
 
   let symbol: string
-  switch (resultType) {
+  switch (type) {
     case "pass": symbol = "✓ "; break
     case "fail": symbol = "✗ "; break
     case "block": symbol = "⌄ "; break
   }
 
   const format = (desc: string) =>
+    "  ".repeat(level) +
     [
-      "  ".repeat(level),
-      resultType === "block"
+      type == "block"
         ? symbol + desc
-        : resultType === "pass"
+        : type == "pass"
           ? green(symbol + desc)
           : red(symbol + desc),
-      " ",
-      Array.isArray(result.outcome)
-        ? passing === total
+
+      type != "block"
+        ? null
+        : passing == total
           ? green(`(${passing})`)
-          : red(`(${passing}/${total})`)
-        : grey(`${result.duration}ms`),
-    ].join("")
+          : red(`(${passing}/${total})`),
+
+      grey(`${result.duration}ms`),
+    ]
+      .filter(Boolean)
+      .join(" ")
 
   console.info(format(result.description))
   if (result.outcome instanceof Error) {
