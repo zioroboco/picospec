@@ -15,7 +15,7 @@
 Picospec is a vanishingly tiny test framework (including test definitions, running and reporting) focusing exclusively on its programmatic API. It provides no CLI / test discovery / parallelism mechanisms whatsoever. If you're looking for a test framework for any half-way normal purpose, _this probably isn't it_.
 
 ```ts
-import { describe, it, suite } from "../dist/pico"
+import { describe, it, suite } from "picospec"
 import expect from "expect"
 
 const run = () => suite([
