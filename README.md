@@ -21,10 +21,12 @@ import { execute, Suite } from "picospec"
 import expect from "expect"
 
 const suite: Suite = [
+
   describe(`a describe block`)
     .setup(async () => ({
       data: await Promise.resolve("blep"),
     }))
+
     .assert(({ data }) => [
       it(`hopefully passes`, () => {
         expect(data).toMatch("blep")
@@ -32,19 +34,19 @@ const suite: Suite = [
       it(`sometimes fails`, () => {
         expect(data).toMatch("blork")
       }),
-      describe(`nested describe blocks`)
+
+      describe(`nested blocks`)
         .setup(async () => ({
           nested: await Promise.resolve("neato"),
         }))
+
         .assert(({ nested }) => [
-          it(`can access data from the outer block`, () => {
+          it(`can also access data from the outer scope`, () => {
             expect(nested).not.toMatch(data)
           }),
         ]),
     ]),
-    .teardown(({ data }) => {
-      cleanupModuleMocksOrWhatever()
-    })
+
 ]
 
 const results = await execute(suite)

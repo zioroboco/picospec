@@ -24,7 +24,7 @@ describe(`an individual failing test`, () => {
 })
 
 describe(`a describe block of only tests`, () => {
-  const block = pico.describe(`some tests`).assert([
+  const block = pico.describe(`some tests`).assert(() => [
     pico.it(`passes, yay`, () => {}),
     pico.it(`fails, boo`, () => {
       expect(true).toBe(false)
@@ -34,18 +34,18 @@ describe(`a describe block of only tests`, () => {
   it(`resolves accordingly`, async () => {
     await block.then(results => {
       expect(results).toMatchObject({
-        "description": "some tests",
-        "duration": expect.any(Number),
-        "outcome": [
+        description: "some tests",
+        duration: expect.any(Number),
+        outcome: [
           {
-            "description": "passes, yay",
-            "duration": expect.any(Number),
-            "outcome": pico.Pass,
+            description: "passes, yay",
+            duration: expect.any(Number),
+            outcome: pico.Pass,
           },
           {
-            "description": "fails, boo",
-            "duration": expect.any(Number),
-            "outcome": expect.any(Error),
+            description: "fails, boo",
+            duration: expect.any(Number),
+            outcome: expect.any(Error),
           },
         ],
       })
@@ -54,17 +54,17 @@ describe(`a describe block of only tests`, () => {
 })
 
 describe(`a deeply nested describe block`, () => {
-  const block = pico.describe(`some tests`).assert([
+  const block = pico.describe(`some tests`).assert(() => [
     pico.it(`passes, yay`, () => {}),
     pico.it(`fails, boo`, () => {
       expect(true).toBe(false)
     }),
-    pico.describe(`with nested tests`).assert([
+    pico.describe(`with nested tests`).assert(() => [
       pico.it(`passes, yay`, () => {}),
       pico.it(`fails, boo`, () => {
         expect(true).toBe(false)
       }),
-      pico.describe(`with even more nested tests`).assert([
+      pico.describe(`with even more nested tests`).assert(() => [
         pico.it(`passes, yay`, () => {}),
         pico.it(`fails, boo`, () => {
           expect(true).toBe(false)
@@ -93,6 +93,62 @@ describe(`a deeply nested describe block`, () => {
                 ],
               },
             ],
+          },
+        ],
+      })
+    })
+  })
+})
+
+describe(`a describe block with setup function`, () => {
+  const block = pico
+    .describe(`some tests`)
+    .setup(async () => ({
+      thing: await Promise.resolve("expected"),
+    }))
+    .assert(({ thing }) => [
+      pico.it(`passes, yay`, () => {
+        expect(thing).toBe("expected")
+      }),
+      pico.it(`fails, boo`, () => {
+        expect(thing).toBe("something else")
+      }),
+    ])
+
+  it(`resolves accordingly`, async () => {
+    await block.then(results => {
+      expect(results).toMatchObject({
+        description: "some tests",
+        outcome: [
+          {
+            description: "passes, yay",
+            outcome: pico.Pass,
+          },
+          {
+            description: "fails, boo",
+            outcome: expect.any(Error),
+          },
+        ],
+      })
+    })
+  })
+})
+
+describe(`a describe block with no setup function`, () => {
+  const block = pico.describe(`no setup`).assert(variables => [
+    pico.it(`passes an empty object`, () => {
+      expect(variables).toMatchInlineSnapshot(`Object {}`)
+    }),
+  ])
+
+  it(`resolves accordingly`, async () => {
+    await block.then(results => {
+      expect(results).toMatchObject({
+        description: "no setup",
+        outcome: [
+          {
+            description: "passes an empty object",
+            outcome: pico.Pass,
           },
         ],
       })

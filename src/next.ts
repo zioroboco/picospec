@@ -30,22 +30,29 @@ export async function it (description: string, thunk: Thunk): Test {
   })
 }
 
-type DescribeDottable = {
-  assert: (tests: Array<Test | Block>) => Block
+function assert <V> (description: string, setup: () => V | Promise<V>) {
+  return (run: (variables: V) => Array<Test | Block>): Block => {
+    return new Promise(async res => {
+      const start = Date.now()
+      const results = await Promise.all(run(await setup()))
+      res({
+        description,
+        duration: Date.now() - start,
+        outcome: results,
+      })
+    })
+  }
 }
 
-export function describe (description: string): DescribeDottable {
+function setup (description: string) {
+  return <V = {}>(fn: () => V | Promise<V>) => ({
+    assert: assert<V>(description, fn),
+  })
+}
+
+export function describe (description: string) {
   return {
-    assert: (children: Array<Test | Block>) => {
-      return new Promise(async res => {
-        const start = Date.now()
-        const results = await Promise.all(children)
-        res({
-          description,
-          duration: Date.now() - start,
-          outcome: results,
-        })
-      })
-    },
+    setup: setup(description),
+    assert: assert(description, () => ({})),
   }
 }
