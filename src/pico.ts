@@ -144,32 +144,16 @@ export async function suite (suite: Array<Block | Test>, settings?: Settings): P
     )
   )
 
-  const report: Report = {
+  return {
     duration: Date.now() - start,
     passes: countPassing(results),
     failures: countFailing(results),
     results,
   }
-
-  if (log) {
-    if (!report.passes && !report.failures) {
-      console.info(yellow(`⚠ No tests found`))
-    } else if (report.failures) {
-      console.info(red(`${report.failures} tests failed`))
-    } else {
-      console.info(green(`All tests passed`))
-    }
-  }
-
-  return report
 }
 
 function red (str: string) {
   return `\x1b[31m${str}\x1b[0m`
-}
-
-function yellow (str: string) {
-  return `\x1b[33m${str}\x1b[0m`
 }
 
 function green (str: string) {
