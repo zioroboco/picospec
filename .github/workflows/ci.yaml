@@ -33,7 +33,7 @@ jobs:
           cache: yarn
       - run: yarn install --immutable
       - run: yarn lint-ci
-  examples:
+  example:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -42,5 +42,4 @@ jobs:
           node-version: 16.x
           cache: yarn
       - run: yarn install --immutable
-      - run: yarn passing
-      - run: yarn failing || exit 0
+      - run: yarn smoke-test

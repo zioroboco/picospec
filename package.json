@@ -21,6 +21,7 @@
   },
   "scripts": {
     "example": "tsc --build && node --no-warnings --experimental-specifier-resolution=node ./example/example.spec.mjs",
+    "smoke-test": "yarn example; [ $? -eq 1 ] || exit 1",
     "build": "tsc --build",
     "clean": "tsc --build --clean",
     "test": "jest --no-cache",
