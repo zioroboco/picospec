@@ -1,5 +1,11 @@
 # picospec
 
+## 0.3.0
+
+### Minor Changes
+
+- d6ab2dd: Big rework of the API
+
 ## 0.2.0
 
 ### Minor Changes
