@@ -24,6 +24,7 @@ export async function it (description: string, thunk: Thunk): Test {
       result.outcome = Pass
     } catch (e: unknown) {
       result.outcome = e instanceof Error ? e : new Error(String(e))
+      console.error(result.outcome)
     }
     result.duration = Date.now() - start
     res(result)
@@ -114,9 +115,6 @@ export async function suite (suite: Suite): Promise<Report> {
               Array.isArray(result.outcome) ? red(`(${passed}/${total})`) : null,
               grey(`${result.duration}ms`),
             ].filter(Boolean).join(" "))
-            if (result.outcome instanceof Error) {
-              console.error(result.outcome.stack)
-            }
           }
           res(result)
         })
