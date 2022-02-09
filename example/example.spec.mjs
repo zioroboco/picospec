@@ -1,20 +1,3 @@
-<header>
-  <div align="center">
-    <h1>
-      <p>🐜</p>
-      <p>picospec</p>
-    </h1>
-    <p>A test framework for ants</p>
-    <a href="https://www.npmjs.com/package/picospec">
-      <img src="https://img.shields.io/npm/v/picospec?style=flat-square">
-    </a>
-  </div>
-  <br/>
-</header>
-
-Picospec is a vanishingly tiny test framework (including test definitions, running and reporting) focusing exclusively on its programmatic API. It provides no CLI / test discovery / parallelism mechanisms whatsoever. If you're looking for a test framework for any half-way normal purpose, _this probably isn't it_.
-
-```ts
 import { describe, it, suite } from "../dist/pico"
 import expect from "expect"
 
@@ -61,6 +44,7 @@ const run = () => suite([
 ])
 
 run().then(report => {
-  // ...
+  if (report.failures) {
+    process.exit(1)
+  }
 })
-```
