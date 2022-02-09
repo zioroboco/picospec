@@ -23,7 +23,6 @@ export async function it (description: string, thunk: Thunk): Test {
       result.outcome = Pass
     } catch (e: unknown) {
       result.outcome = e instanceof Error ? e : new Error(String(e))
-      console.info(result.outcome)
     }
     result.duration = Date.now() - start
     res(result)
@@ -92,7 +91,52 @@ function count (results: Array<TestResult | BlockResult>): number {
   return n
 }
 
-export async function suite (suite: Array<Block | Test>): Promise<Report> {
+function consoleLogger (result: TestResult | BlockResult, level = 0): void {
+  const passes = sum("passes", [result])
+  const total = count([result])
+
+  const format = (desc: string) =>
+    [
+      "  ".repeat(level),
+      result.outcome === Pass || passes === total
+        ? green("✔ " + desc)
+        : red("✖ " + desc),
+      " ",
+      Array.isArray(result.outcome)
+        ? passes === total
+          ? green(`(${passes})`)
+          : red(`(${passes}/${total})`)
+        : grey(`${result.duration}ms`),
+    ].join("")
+
+  console.info(format(result.description))
+  if (result.outcome instanceof Error) {
+    console.error()
+    console.error(result.outcome.stack ?? result.outcome.message)
+    console.error()
+  }
+
+  if (Array.isArray(result.outcome)) {
+    for (const sub of result.outcome) {
+      consoleLogger(sub, level + 1)
+    }
+  }
+}
+
+type Logger = (result: TestResult | BlockResult) => void
+
+type Settings = {
+  log?: boolean
+  logger?: Logger
+}
+
+export async function suite (suite: Array<Block | Test>, settings?: Settings): Promise<Report> {
+  let { log, logger } = {
+    log: true,
+    logger: consoleLogger,
+    ...settings,
+  }
+
   const start = Date.now()
 
   const results = await Promise.all(
@@ -100,21 +144,7 @@ export async function suite (suite: Array<Block | Test>): Promise<Report> {
       test =>
         new Promise<TestResult | BlockResult>(async res => {
           const result = await test
-          const passes = sum("passes", [result])
-          const total = count([result])
-          if (result.outcome === Pass || passes === total) {
-            console.info([
-              green(`✔ ${result.description}`),
-              Array.isArray(result.outcome) ? green(`(${passes})`) : null,
-              grey(`${result.duration}ms`),
-            ].filter(Boolean).join(" "))
-          } else {
-            console.info([
-              red(`✖ ${result.description}`),
-              Array.isArray(result.outcome) ? red(`(${passes}/${total})`) : null,
-              grey(`${result.duration}ms`),
-            ].filter(Boolean).join(" "))
-          }
+          if (log) logger(result)
           res(result)
         })
     )
@@ -127,29 +157,31 @@ export async function suite (suite: Array<Block | Test>): Promise<Report> {
     results,
   }
 
-  if (!report.passes && !report.failures) {
-    console.info(yellow(`⚠ No tests found`))
-  } else if (report.failures) {
-    console.info(red(`${report.failures} tests failed`))
-  } else {
-    console.info(green(`All tests passed`))
+  if (log) {
+    if (!report.passes && !report.failures) {
+      console.info(yellow(`⚠ No tests found`))
+    } else if (report.failures) {
+      console.info(red(`${report.failures} tests failed`))
+    } else {
+      console.info(green(`All tests passed`))
+    }
   }
 
   return report
 }
 
-const red = function (str: string) {
+function red (str: string) {
   return `\x1b[31m${str}\x1b[0m`
 }
 
-const yellow = function (str: string) {
+function yellow (str: string) {
   return `\x1b[33m${str}\x1b[0m`
 }
 
-const green = function (str: string) {
+function green (str: string) {
   return `\x1b[32m${str}\x1b[0m`
 }
 
-const grey = function (str: string) {
+function grey (str: string) {
   return `\x1b[90m${str}\x1b[0m`
 }

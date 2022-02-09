@@ -1,8 +1,6 @@
 import * as pico from "./pico"
 import { describe, expect, it, jest } from "@jest/globals"
 
-jest.spyOn(console, "info")
-
 describe(`an individual passing test`, () => {
   const test = pico.it(`passes, yay`, () => {})
 
@@ -181,7 +179,7 @@ describe(`reporting on a suite of tests`, () => {
   ]
 
   it(`returns the expected report`, async () => {
-    const report = await pico.suite(suite)
+    const report = await pico.suite(suite, { log: false })
     expect(report).toMatchObject({
       duration: expect.any(Number),
       passes: 3,
