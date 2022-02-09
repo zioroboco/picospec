@@ -30,12 +30,16 @@ export async function it (description: string, thunk: Thunk): Test {
   })
 }
 
-export function describe (description: string) {
+type DescribeDottable = {
+  assert: (tests: Array<Test | Block>) => Block
+}
+
+export function describe (description: string): DescribeDottable {
   return {
-    assert: (tests: Array<Test>) => {
+    assert: (children: Array<Test | Block>) => {
       return new Promise(async res => {
         const start = Date.now()
-        const results = await Promise.all(tests)
+        const results = await Promise.all(children)
         res({
           description,
           duration: Date.now() - start,
