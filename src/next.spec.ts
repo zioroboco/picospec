@@ -155,3 +155,56 @@ describe(`a describe block with no setup function`, () => {
     })
   })
 })
+
+describe(`reporting on a suite of tests`, () => {
+  const suite = [
+    pico.describe(`some tests`).assert(() => [
+      pico.it(`passes, yay`, () => {}),
+      pico.it(`fails, boo`, () => {
+        expect(true).toBe(false)
+      }),
+      pico.describe(`with nested tests`).assert(() => [
+        pico.it(`passes, yay`, () => {}),
+        pico.it(`fails, boo`, () => {
+          expect(true).toBe(false)
+        }),
+        pico.describe(`with even more nested tests`).assert(() => [
+          pico.it(`passes, yay`, () => {}),
+          pico.it(`fails, boo`, () => {
+            expect(true).toBe(false)
+          }),
+        ]),
+      ]),
+    ]),
+  ]
+
+  it(`returns the expected report`, async () => {
+    const report = await pico.execute(suite)
+    expect(report).toMatchObject({
+      duration: expect.any(Number),
+      passed: 3,
+      failed: 3,
+      results: [{
+        description: "some tests",
+        outcome: [
+          { description: "passes, yay", outcome: pico.Pass },
+          { description: "fails, boo", outcome: expect.any(Error) },
+          {
+            description: "with nested tests",
+            outcome: [
+              { description: "passes, yay", outcome: pico.Pass },
+              { description: "fails, boo", outcome: expect.any(Error) },
+              {
+                description: "with even more nested tests",
+                outcome: [
+                  { description: "passes, yay", outcome: pico.Pass },
+                  { description: "fails, boo", outcome: expect.any(Error) },
+                ],
+              },
+            ],
+          },
+        ],
+      }],
+    })
+  })
+})
