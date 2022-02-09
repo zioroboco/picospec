@@ -1,5 +1,12 @@
 # picospec
 
+## 0.3.1
+
+### Patch Changes
+
+- fea9ea0: Remove summary line from logger output
+- bcda66b: More readable blocks in logger output
+
 ## 0.3.0
 
 ### Minor Changes
