@@ -184,27 +184,55 @@ describe(`reporting on a suite of tests`, () => {
       duration: expect.any(Number),
       passes: 3,
       failures: 3,
-      results: [{
-        description: "some tests",
-        outcome: [
-          { description: "passes, yay", outcome: expect.any(Symbol) },
-          { description: "fails, boo", outcome: expect.any(Error) },
-          {
-            description: "with nested tests",
-            outcome: [
-              { description: "passes, yay", outcome: expect.any(Symbol) },
-              { description: "fails, boo", outcome: expect.any(Error) },
-              {
-                description: "with even more nested tests",
-                outcome: [
-                  { description: "passes, yay", outcome: expect.any(Symbol) },
-                  { description: "fails, boo", outcome: expect.any(Error) },
-                ],
-              },
-            ],
-          },
-        ],
-      }],
+      results: [
+        {
+          description: "some tests",
+          outcome: [
+            { description: "passes, yay", outcome: expect.any(Symbol) },
+            { description: "fails, boo", outcome: expect.any(Error) },
+            {
+              description: "with nested tests",
+              outcome: [
+                { description: "passes, yay", outcome: expect.any(Symbol) },
+                { description: "fails, boo", outcome: expect.any(Error) },
+                {
+                  description: "with even more nested tests",
+                  outcome: [
+                    { description: "passes, yay", outcome: expect.any(Symbol) },
+                    { description: "fails, boo", outcome: expect.any(Error) },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+  })
+
+  describe(pico.flatten.name, () => {
+    it("flattens the results", async () => {
+      const { results } = await pico.suite(suite, { log: false })
+      expect(pico.flatten(results)).toStrictEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            descriptions: ["some tests", "passes, yay"],
+            outcome: expect.any(Symbol),
+          }),
+          expect.objectContaining({
+            descriptions: ["some tests", "fails, boo"],
+            outcome: expect.any(Error),
+          }),
+          expect.objectContaining({
+            descriptions: ["some tests", "with nested tests", "passes, yay"],
+            outcome: expect.any(Symbol),
+          }),
+          expect.objectContaining({
+            descriptions: ["some tests", "with nested tests", "fails, boo"],
+            outcome: expect.any(Error),
+          }),
+        ])
+      )
     })
   })
 })

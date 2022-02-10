@@ -1,16 +1,16 @@
-const Pass = Symbol("Pass")
+export const Pass = Symbol("Pass")
 
-type TestOutcome = typeof Pass | Error
-type BlockOutcome = Array<Result<BlockOutcome> | Result<TestOutcome>>
+export type TestOutcome = typeof Pass | Error
+export type BlockOutcome = Array<Result<BlockOutcome> | Result<TestOutcome>>
 
-type Result<T = TestOutcome | BlockOutcome> = {
+export type Result<T = TestOutcome | BlockOutcome> = {
   description: string
   duration: number
   outcome: T
 }
 
-type Test = Promise<Result<TestOutcome>>
-type Block = Promise<Result<BlockOutcome>>
+export type Test = Promise<Result<TestOutcome>>
+export type Block = Promise<Result<BlockOutcome>>
 
 type Thunk = () => void | Promise<void>
 
@@ -61,6 +61,26 @@ type Report = {
   passes: number
   failures: number
   results: Result[]
+}
+
+type FlatResult = Omit<Result, "description"> & {
+  descriptions: string[]
+}
+
+export function flatten (results: Result[], descriptions: string[] = []): FlatResult[] {
+  const rv: FlatResult[] = []
+  for (const result of results) {
+    if (Array.isArray(result.outcome)) {
+      rv.push(...flatten(result.outcome, [...descriptions, result.description]))
+    } else {
+      rv.push({
+        descriptions: [...descriptions, result.description],
+        duration: result.duration,
+        outcome: result.outcome,
+      })
+    }
+  }
+  return rv
 }
 
 function count (where: (r: Result) => boolean) {
