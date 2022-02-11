@@ -1,5 +1,11 @@
 # picospec
 
+## 0.4.0
+
+### Minor Changes
+
+- 67daa92: Remove all logging output, and flatten results for easier DIY logging.
+
 ## 0.3.1
 
 ### Patch Changes
