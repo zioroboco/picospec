@@ -2,4 +2,4 @@
 "picospec": minor
 ---
 
-Add a function for flattening results, and expose more types
+Remove all logging output, and flatten results for easier DIY logging.
